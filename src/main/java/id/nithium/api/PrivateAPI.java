@@ -5,6 +5,8 @@ import cz.foresttech.forestredis.shared.RedisManager;
 import cz.foresttech.forestredis.shared.models.MessageTransferObject;
 import cz.foresttech.forestredis.shared.models.RedisConfiguration;
 import id.nithium.api.event.EventManager;
+import id.nithium.api.redis.AsyncRedisReceivedMessageEvent;
+import id.nithium.api.redis.RedisReceivedMessageEvent;
 import id.nithium.libraries.proxima.Proxima;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +28,11 @@ public class PrivateAPI implements IForestRedisPlugin {
     private RedisManager redisManager;
     private EventManager eventManager;
 
-    public PrivateAPI() {
+    public PrivateAPI(RedisCredential redisCredential, String[] channels) {
         instance = this;
+
+        this.redisCredential = redisCredential;
+        this.channels = channels;
 
         RedisConfiguration redisConfiguration = new RedisConfiguration(
                 redisCredential.getHost(),
@@ -52,7 +57,14 @@ public class PrivateAPI implements IForestRedisPlugin {
 
     @Override
     public void onMessageReceived(String s, MessageTransferObject messageTransferObject) {
+        AsyncRedisReceivedMessageEvent asyncRedisReceivedMessageEvent = new AsyncRedisReceivedMessageEvent(s, messageTransferObject);
+        executorService.submit(() -> eventManager.callEvent(asyncRedisReceivedMessageEvent));
 
+        if (!asyncRedisReceivedMessageEvent.isCancelled()) {
+            new Thread(() -> {
+                eventManager.callEvent(new RedisReceivedMessageEvent(asyncRedisReceivedMessageEvent.getChannel(), asyncRedisReceivedMessageEvent.getMessageTransferObject()));
+            });
+        }
     }
 
     @Override
