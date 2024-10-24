@@ -7,6 +7,7 @@ import cz.foresttech.forestredis.shared.models.RedisConfiguration;
 import id.nithium.api.event.EventManager;
 import id.nithium.api.redis.AsyncRedisReceivedMessageEvent;
 import id.nithium.api.redis.RedisReceivedMessageEvent;
+import id.nithium.api.server.ServerManager;
 import id.nithium.libraries.proxima.Proxima;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class PrivateAPI implements IForestRedisPlugin {
     private RedisCredential redisCredential;
     private RedisManager redisManager;
     private EventManager eventManager;
+    private ServerManager serverManager;
 
     public PrivateAPI(RedisCredential redisCredential, String[] channels) {
         instance = this;
@@ -48,6 +50,7 @@ public class PrivateAPI implements IForestRedisPlugin {
         redisManager.subscribe(channels);
 
         eventManager = new EventManager();
+        serverManager = new ServerManager();
     }
 
     @Override
