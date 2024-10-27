@@ -23,19 +23,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
+            <groupId>org.projectlombok</groupId>3
             <artifactId>lombok</artifactId>
             <version>1.18.34</version>
         </dependency>
         <dependency>
-            <groupId>com.github.ForestTechMC</groupId>
-            <artifactId>ForestRedisAPI</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.NithiumDevelopment</groupId>
-            <artifactId>Proxima</artifactId>
-            <version>a3a663c53e</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
         </dependency>
     </dependencies>
 
