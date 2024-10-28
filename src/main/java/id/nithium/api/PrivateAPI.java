@@ -20,11 +20,10 @@ public class PrivateAPI {
     @Getter
     private static PrivateAPI instance;
 
-    private final String BASE_URL = "localhost:8080/v1/"; // https://api.nithium.id/api/v1/
+    private final String BASE_URL = "localhost:8080/v1/"; // Default -> https://api.nithium.id/api/v1/
     private final HttpClient httpClient;
     public final Gson GSON;
-
-    private CanopusPrivateAPI canopusPrivateAPI;
+    private final CanopusPrivateAPI canopusPrivateAPI;
 
     public PrivateAPI(HttpClient httpClient) {
         this.httpClient = httpClient;
@@ -33,7 +32,7 @@ public class PrivateAPI {
         canopusPrivateAPI = new CanopusPrivateAPI(this);
     }
 
-    public <T extends AbstractModel> T get(DataType dataType, String url, Class<T> clazzz) throws IOException, InterruptedException {
+    public <T extends AbstractModel> T get(DataType dataType, String url, Class<T> clazz) throws IOException, InterruptedException {
         String url1 = BASE_URL + dataType.getName() + url;
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -45,7 +44,7 @@ public class PrivateAPI {
 
         if (response.statusCode() == 200) {
 
-            return GSON.fromJson(response.body(), clazzz);
+            return GSON.fromJson(response.body(), clazz);
         } else {
             throw new NithiumException("Error: " + response.statusCode());
         }

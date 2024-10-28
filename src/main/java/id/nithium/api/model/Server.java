@@ -11,6 +11,7 @@ public class Server extends AbstractModel {
 
     private String name;
     private int port;
+    private Environment environment;
     private String containerId;
     private int serverType;
     private String modeType;

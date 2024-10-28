@@ -16,22 +16,22 @@ public class CanopusPrivateAPI {
 
     @SneakyThrows
     public Status getStatus() {
-        return privateAPI.get(DataType.DATA_3, "status", Status.class);
+        return privateAPI.get(dataType, "status", Status.class);
     }
 
     @SneakyThrows
     public void setStatus(Status.StatusType statusType, boolean locked) {
         Status status1 = new Status(statusType, locked);
-        privateAPI.post(DataType.DATA_3, privateAPI.GSON.toJson(status1), "status", Status.class);
+        privateAPI.post(dataType, privateAPI.GSON.toJson(status1), "status", Status.class);
     }
 
     @SneakyThrows
     public Server getServer(String serverName) {
-        return privateAPI.get(DataType.DATA_3, "server?name=" + serverName, Server.class);
+        return privateAPI.get(dataType, "servers?name=" + serverName, Server.class);
     }
 
     @SneakyThrows
     public Server getServer(int port) {
-        return privateAPI.get(DataType.DATA_3, "server?port=" + port, Server.class);
+        return privateAPI.get(dataType, "servers?port=" + port, Server.class);
     }
 }
