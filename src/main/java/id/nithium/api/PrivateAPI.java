@@ -20,7 +20,7 @@ public class PrivateAPI {
     @Getter
     private static PrivateAPI instance;
 
-    private final String BASE_URL = "localhost:8080/v1/"; // Default -> https://api.nithium.id/api/v1/
+    private final String BASE_URL = "http://localhost:8080/v1/"; // Default -> https://api.nithium.id/api/v1/
     private final HttpClient httpClient;
     public final Gson GSON;
     private final CanopusPrivateAPI canopusPrivateAPI;
