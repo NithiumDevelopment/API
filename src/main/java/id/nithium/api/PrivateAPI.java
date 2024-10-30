@@ -12,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 
 @Getter
 @Setter
@@ -50,22 +51,21 @@ public class PrivateAPI {
         }
     }
 
-    public <T extends AbstractModel> T post(DataType dataType, String request, String url, Class<T> clazz) throws IOException, InterruptedException {
-        String url1 = BASE_URL + dataType.getName() + url;
+    public <T extends AbstractModel> T post(DataType dataType, Object request, String url, Class<T> clazz) throws Exception {
+        String url1 = BASE_URL + dataType + url;
 
-        HttpRequest request1 = HttpRequest.newBuilder()
-                .uri(URI.create(url1))
+        String json = GSON.toJson(request);
+        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8);
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(new URI(url1))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(request))
+                .POST(bodyPublishers)
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request1, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() == 200) {
-
-            return GSON.fromJson(response.body(), clazz);
-        } else {
-            throw new NithiumException("Error: " + response.statusCode());
-        }
+        T obj = GSON.fromJson(response.body(), clazz);
+        return obj;
     }
 }
