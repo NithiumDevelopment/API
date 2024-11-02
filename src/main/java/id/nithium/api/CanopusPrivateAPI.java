@@ -21,7 +21,9 @@ public class CanopusPrivateAPI {
 
     @SneakyThrows
     public void setStatus(Status.StatusType statusType, boolean locked) {
-        Status status1 = new Status(statusType, locked);
+        Status status1 = new Status();
+        status1.setStatusType(statusType);
+        status1.setLocked(locked);
         privateAPI.post(dataType, status1, "status", Status.class);
     }
 
