@@ -49,7 +49,7 @@ public class PrivateAPI {
     }
 
     public <T extends AbstractModel> T post(DataType dataType, Object request, String url, Class<T> clazz) throws Exception {
-        String url1 = BASE_URL + dataType + url;
+        String url1 = BASE_URL + dataType.getName() + url;
 
         String json = GSON.toJson(request);
         HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8);
