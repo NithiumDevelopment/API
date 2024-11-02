@@ -1,7 +1,6 @@
 package id.nithium.api;
 
 import com.google.gson.Gson;
-import id.nithium.api.exception.NithiumException;
 import id.nithium.api.model.AbstractModel;
 import id.nithium.api.type.DataType;
 import lombok.Getter;
@@ -36,7 +35,7 @@ public class PrivateAPI {
     }
 
     @SneakyThrows
-    public <T extends Class> T get(DataType dataType, String url, Class<T> clazz) throws IOException, InterruptedException {
+    public <T extends AbstractModel> T get(DataType dataType, String url, Class<T> clazz) throws IOException, InterruptedException {
         String url1 = BASE_URL + dataType.getName() + url;
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
@@ -49,7 +48,7 @@ public class PrivateAPI {
         return t;
     }
 
-    public <T extends Class> T post(DataType dataType, Object request, String url, Class<T> clazz) throws Exception {
+    public <T extends AbstractModel> T post(DataType dataType, Object request, String url, Class<T> clazz) throws Exception {
         String url1 = BASE_URL + dataType + url;
 
         String json = GSON.toJson(request);
