@@ -6,6 +6,7 @@ import id.nithium.api.model.AbstractModel;
 import id.nithium.api.type.DataType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,6 +14,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 @Setter
@@ -33,25 +35,21 @@ public class PrivateAPI {
         canopusPrivateAPI = new CanopusPrivateAPI(this);
     }
 
-    public <T extends AbstractModel> T get(DataType dataType, String url, Class<T> clazz) throws IOException, InterruptedException {
+    @SneakyThrows
+    public <T extends Class> T get(DataType dataType, String url, Class<T> clazz) throws IOException, InterruptedException {
         String url1 = BASE_URL + dataType.getName() + url;
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url1))
-                .GET()
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(new URI(url1))
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 200) {
-
-            return GSON.fromJson(response.body(), clazz);
-        } else {
-            throw new NithiumException("Error: " + response.statusCode());
-        }
+        CompletableFuture<HttpResponse<String>> responseCompletableFuture = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = responseCompletableFuture.get();
+        T t = GSON.fromJson(response.body(), clazz);
+        return t;
     }
 
-    public <T extends AbstractModel> T post(DataType dataType, Object request, String url, Class<T> clazz) throws Exception {
+    public <T extends Class> T post(DataType dataType, Object request, String url, Class<T> clazz) throws Exception {
         String url1 = BASE_URL + dataType + url;
 
         String json = GSON.toJson(request);
