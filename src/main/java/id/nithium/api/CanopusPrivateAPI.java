@@ -14,26 +14,4 @@ public class CanopusPrivateAPI {
         this.privateAPI = privateAPI;
     }
 
-    @SneakyThrows
-    public Status getStatus() {
-        return privateAPI.get(dataType, "status", Status.class);
-    }
-
-    @SneakyThrows
-    public void setStatus(Status.StatusType statusType, boolean locked) {
-        Status status1 = new Status();
-        status1.setStatusType(statusType);
-        status1.setLocked(locked);
-        privateAPI.post(dataType, status1, "status", Status.class);
-    }
-
-    @SneakyThrows
-    public Server getServer(String serverName) {
-        return privateAPI.get(dataType, "servers?name=" + serverName, Server.class);
-    }
-
-    @SneakyThrows
-    public Server getServer(int port) {
-        return privateAPI.get(dataType, "servers?port=" + port, Server.class);
-    }
 }
