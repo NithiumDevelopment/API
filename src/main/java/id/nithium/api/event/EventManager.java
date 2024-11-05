@@ -1,5 +1,7 @@
 package id.nithium.api.event;
 
+import id.nithium.api.exception.NithiumException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
