@@ -10,7 +10,7 @@ import java.net.http.HttpClient;
 public class NithiumAPI {
 
     @Getter
-    private static NithiumAPI instance;
+    private static NithiumAPI instance;                                         
 
     private String BASE_URL = "http://localhost:8080/v1/";
     private final HttpClient httpClient;
@@ -20,5 +20,4 @@ public class NithiumAPI {
         this.httpClient = httpClient;
         GSON = new Gson();
     }
-
 }
