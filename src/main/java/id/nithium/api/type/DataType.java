@@ -8,9 +8,9 @@ public enum DataType {
     DATA_2("d2/"),
     DATA_3("d3/");
 
-    private String name;
+    private String url;
 
-    DataType(String name) {
-        this.name = name;
+    DataType(String url) {
+        this.url = url;
     }
 }
