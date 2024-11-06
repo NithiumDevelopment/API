@@ -17,6 +17,8 @@ public class NithiumAPI {
     public final Gson GSON;
 
     public NithiumAPI(HttpClient httpClient) {
+        instance = this;
+
         this.httpClient = httpClient;
         GSON = new Gson();
     }
