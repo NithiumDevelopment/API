@@ -6,6 +6,7 @@ import id.nithium.api.type.DataType;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -43,6 +44,22 @@ public class NithiumAPI {
 
             return GSON.fromJson(json, clazz);
         } catch (IOException | ParseException e) {
+            throw new NithiumException(e.getLocalizedMessage());
+        }
+    }
+
+    public void POST(DataType dataType, String url, Object object) {
+        String httpurl = BASE_URL + dataType.getUrl() + url;
+
+        HttpPost httpPost = new HttpPost(httpurl);
+        String json = GSON.toJson(object);
+        StringEntity stringEntity = new StringEntity(json);
+        httpPost.addHeader("Content-Type", "application/json");
+        httpPost.setEntity(stringEntity);
+
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+        } catch (IOException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
     }
