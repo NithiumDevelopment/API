@@ -34,7 +34,7 @@ public class NithiumAPI {
         GSON = new Gson();
     }
 
-    public <T> T GET(DataType dataType, String url, Class<T> clazz) throws NithiumException {
+    public <T> NithiumHttpResponse<T> GET(DataType dataType, String url, Class<T> clazz) throws NithiumException {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
         try {
@@ -42,16 +42,16 @@ public class NithiumAPI {
 
             String json = EntityUtils.toString(response.getEntity());
 
-            return GSON.fromJson(json, clazz);
+            return new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
         } catch (IOException | ParseException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
     }
 
-    public void POST(DataType dataType, String url, Object object) {
-        String httpurl = BASE_URL + dataType.getUrl() + url;
+    public NithiumHttpResponse<Object> POST(DataType dataType, String url, Object object) {
+        String httpUrl = BASE_URL + dataType.getUrl() + url;
 
-        HttpPost httpPost = new HttpPost(httpurl);
+        HttpPost httpPost = new HttpPost(httpUrl);
         String json = GSON.toJson(object);
         StringEntity stringEntity = new StringEntity(json);
         httpPost.addHeader("Content-Type", "application/json");
@@ -59,12 +59,13 @@ public class NithiumAPI {
 
         try {
             CloseableHttpResponse response = httpClient.execute(httpPost);
+            return new NithiumHttpResponse<>(response, object);
         } catch (IOException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
     }
 
-    public void PUT(DataType dataType, String url, Object object) throws NithiumException {
+    public NithiumHttpResponse<Object> PUT(DataType dataType, String url, Object object) throws NithiumException {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
         HttpPut httpPut = new HttpPut(httpUrl);
@@ -75,6 +76,7 @@ public class NithiumAPI {
 
         try {
             CloseableHttpResponse response = httpClient.execute(httpPut);
+            return new NithiumHttpResponse<>(response, object);
         } catch (IOException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }

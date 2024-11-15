@@ -8,7 +8,7 @@ public enum DataType {
     DATA_2("d2/"),
     DATA_3("d3/");
 
-    private String url;
+    private final String url;
 
     DataType(String url) {
         this.url = url;
