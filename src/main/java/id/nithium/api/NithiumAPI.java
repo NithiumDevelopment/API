@@ -5,6 +5,7 @@ import id.nithium.api.exception.NithiumException;
 import id.nithium.api.type.DataType;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
@@ -77,6 +78,19 @@ public class NithiumAPI {
         try {
             CloseableHttpResponse response = httpClient.execute(httpPut);
             return new NithiumHttpResponse<>(response, object);
+        } catch (IOException e) {
+            throw new NithiumException(e.getLocalizedMessage());
+        }
+    }
+
+    public void DELETE(DataType dataType, String url) throws NithiumException {
+        String httpUrl = BASE_URL + dataType.getUrl() + url;
+
+        HttpDelete httpDelete = new HttpDelete(httpUrl);
+        httpDelete.setHeader("Accept", "application/json");
+
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpDelete);
         } catch (IOException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
