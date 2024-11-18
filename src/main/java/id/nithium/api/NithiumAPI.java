@@ -35,6 +35,26 @@ public class NithiumAPI {
         GSON = new Gson();
     }
 
+    public <T> NithiumHttpResponse<T> GET(DataType dataType, String url, String apiKey, Class<T> clazz) throws NithiumException {
+        String httpUrl = BASE_URL + dataType.getUrl() + url;
+
+        try {
+            HttpGet httpGet = new HttpGet(httpUrl);
+            httpGet.addHeader("X_API_KEY", apiKey);
+
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+
+            String json = EntityUtils.toString(response.getEntity());
+
+            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
+            if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
+
+            return nithiumHttpResponse;
+        } catch (IOException | ParseException e) {
+            throw new NithiumException(e.getLocalizedMessage());
+        }
+    }
+
     public <T> NithiumHttpResponse<T> GET(DataType dataType, String url, Class<T> clazz) throws NithiumException {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
@@ -43,8 +63,33 @@ public class NithiumAPI {
 
             String json = EntityUtils.toString(response.getEntity());
 
-            return new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
+            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
+            if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
+
+            return nithiumHttpResponse;
         } catch (IOException | ParseException e) {
+            throw new NithiumException(e.getLocalizedMessage());
+        }
+    }
+
+    public NithiumHttpResponse<Object> POST(DataType dataType, String url, String apiKey, Object object) {
+        String httpUrl = BASE_URL + dataType.getUrl() + url;
+
+        HttpPost httpPost = new HttpPost(httpUrl);
+        String json = GSON.toJson(object);
+        StringEntity stringEntity = new StringEntity(json);
+        httpPost.addHeader("Content-Type", "application/json");
+        httpPost.addHeader("X_API_KEY", apiKey);
+        httpPost.setEntity(stringEntity);
+
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPost);
+
+            NithiumHttpResponse<Object> nithiumHttpResponse = new NithiumHttpResponse<>(response, object);
+            if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
+
+            return nithiumHttpResponse;
+        } catch (IOException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
     }
@@ -66,6 +111,28 @@ public class NithiumAPI {
         }
     }
 
+    public NithiumHttpResponse<Object> PUT(DataType dataType, String url, String apiKey, Object object) throws NithiumException {
+        String httpUrl = BASE_URL + dataType.getUrl() + url;
+
+        HttpPut httpPut = new HttpPut(httpUrl);
+        String json = GSON.toJson(object);
+        StringEntity stringEntity = new StringEntity(json);
+        httpPut.addHeader("Content-Type", "application/json");
+        httpPut.addHeader("X_API_KEY", apiKey);
+        httpPut.setEntity(stringEntity);
+
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpPut);
+
+            NithiumHttpResponse<Object> nithiumHttpResponse = new NithiumHttpResponse<>(response, object);
+            if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
+
+            return nithiumHttpResponse;
+        } catch (IOException e) {
+            throw new NithiumException(e.getLocalizedMessage());
+        }
+    }
+
     public NithiumHttpResponse<Object> PUT(DataType dataType, String url, Object object) throws NithiumException {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
@@ -77,13 +144,35 @@ public class NithiumAPI {
 
         try {
             CloseableHttpResponse response = httpClient.execute(httpPut);
-            return new NithiumHttpResponse<>(response, object);
+
+            NithiumHttpResponse<Object> nithiumHttpResponse = new NithiumHttpResponse<>(response, object);
+            if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
+
+            return nithiumHttpResponse;
         } catch (IOException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
     }
 
-    public void DELETE(DataType dataType, String url) throws NithiumException {
+    public boolean DELETE(DataType dataType, String url, String apiKey) throws NithiumException {
+        String httpUrl = BASE_URL + dataType.getUrl() + url;
+
+        HttpDelete httpDelete = new HttpDelete(httpUrl);
+        httpDelete.setHeader("Accept", "application/json");
+        httpDelete.addHeader("X_API_KEY", apiKey);
+
+        try {
+            CloseableHttpResponse response = httpClient.execute(httpDelete);
+
+            if (response.getCode() != 200) throw new NithiumException(response.getReasonPhrase());
+
+            return true;
+        } catch (IOException e) {
+            throw new NithiumException(e.getLocalizedMessage());
+        }
+    }
+
+    public boolean DELETE(DataType dataType, String url) throws NithiumException {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
         HttpDelete httpDelete = new HttpDelete(httpUrl);
@@ -91,6 +180,10 @@ public class NithiumAPI {
 
         try {
             CloseableHttpResponse response = httpClient.execute(httpDelete);
+
+            if (response.getCode() != 200) throw new NithiumException(response.getReasonPhrase());
+
+            return true;
         } catch (IOException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
