@@ -46,17 +46,8 @@ public class NithiumAPI {
             CloseableHttpResponse response = httpClient.execute(httpGet);
 
             String json = EntityUtils.toString(response.getEntity());
-            T parsedResponse = GSON.fromJson(json, clazz);
 
-            if (clazz.equals(String.class)) {
-                parsedResponse = clazz.cast(json);
-            } else {
-                parsedResponse = GSON.fromJson(json, clazz);
-            }
-
-            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, parsedResponse);
-
-            return nithiumHttpResponse;
+            return new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
         } catch (IOException | ParseException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
@@ -69,18 +60,8 @@ public class NithiumAPI {
             CloseableHttpResponse response = httpClient.execute(new HttpGet(httpUrl));
 
             String json = EntityUtils.toString(response.getEntity());
-            T parsedResponse = GSON.fromJson(json, clazz);
 
-            if (clazz.equals(String.class)) {
-                parsedResponse = clazz.cast(json);
-            } else {
-                parsedResponse = GSON.fromJson(json, clazz);
-            }
-
-            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, parsedResponse);
-            if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
-
-            return nithiumHttpResponse;
+            return new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
         } catch (IOException | ParseException e) {
             throw new NithiumException(e.getLocalizedMessage());
         }
