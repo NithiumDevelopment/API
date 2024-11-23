@@ -55,7 +55,6 @@ public class NithiumAPI {
             }
 
             NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, parsedResponse);
-            if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
 
             return nithiumHttpResponse;
         } catch (IOException | ParseException e) {
