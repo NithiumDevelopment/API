@@ -63,7 +63,14 @@ public class NithiumAPI {
 
             String json = EntityUtils.toString(response.getEntity());
 
-            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
+            T parsedResponse;
+            if (clazz.equals(String.class)) {
+                parsedResponse = clazz.cast(json);
+            } else {
+                parsedResponse = GSON.fromJson(json, clazz);
+            }
+
+            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, parsedResponse);
             if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
 
             return nithiumHttpResponse;
@@ -76,10 +83,11 @@ public class NithiumAPI {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
         HttpPost httpPost = new HttpPost(httpUrl);
-        String json = GSON.toJson(object);
-        StringEntity stringEntity = new StringEntity(json);
         httpPost.addHeader("Content-Type", "application/json");
         httpPost.addHeader("X_API_KEY", apiKey);
+
+        String json = GSON.toJson(object);
+        StringEntity stringEntity = new StringEntity(json);
         httpPost.setEntity(stringEntity);
 
         try {
@@ -115,10 +123,11 @@ public class NithiumAPI {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
         HttpPut httpPut = new HttpPut(httpUrl);
-        String json = GSON.toJson(object);
-        StringEntity stringEntity = new StringEntity(json);
         httpPut.addHeader("Content-Type", "application/json");
         httpPut.addHeader("X_API_KEY", apiKey);
+
+        String json = GSON.toJson(object);
+        StringEntity stringEntity = new StringEntity(json);
         httpPut.setEntity(stringEntity);
 
         try {
