@@ -16,6 +16,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 
 @Getter
 @Setter
@@ -38,15 +39,22 @@ public class NithiumAPI {
     public <T> NithiumHttpResponse<T> GET(DataType dataType, String url, String apiKey, Class<T> clazz) throws NithiumException {
         String httpUrl = BASE_URL + dataType.getUrl() + url;
 
-        try {
-            HttpGet httpGet = new HttpGet(httpUrl);
-            httpGet.addHeader("X_API_KEY", apiKey);
+        HttpGet httpGet = new HttpGet(httpUrl);
+        httpGet.addHeader("X_API_KEY", apiKey);
 
+        try {
             CloseableHttpResponse response = httpClient.execute(httpGet);
 
             String json = EntityUtils.toString(response.getEntity());
+            T parsedResponse = GSON.fromJson(json, clazz);
 
-            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, GSON.fromJson(json, clazz));
+            if (clazz.equals(String.class)) {
+                parsedResponse = clazz.cast(json);
+            } else {
+                parsedResponse = GSON.fromJson(json, clazz);
+            }
+
+            NithiumHttpResponse<T> nithiumHttpResponse = new NithiumHttpResponse<>(response, parsedResponse);
             if (nithiumHttpResponse.response().getCode() != 200) throw new NithiumException(nithiumHttpResponse.response().getReasonPhrase());
 
             return nithiumHttpResponse;
@@ -62,8 +70,8 @@ public class NithiumAPI {
             CloseableHttpResponse response = httpClient.execute(new HttpGet(httpUrl));
 
             String json = EntityUtils.toString(response.getEntity());
+            T parsedResponse = GSON.fromJson(json, clazz);
 
-            T parsedResponse;
             if (clazz.equals(String.class)) {
                 parsedResponse = clazz.cast(json);
             } else {
